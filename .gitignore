@@ -1,0 +1,14 @@
+ld_config.mk
+*.a
+*.o
+*.dylib*
+*.so
+*.so.*
+*_test
+db_bench
+leveldbutil
+cmake*
+.idea*
+CMake*
+out-shared
+out-static

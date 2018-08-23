@@ -15,6 +15,7 @@
 #include "db/tbb_rand_db.h"
 #include "db/tbb_scan_db.h"
 #include "db/leveldb_db.h"
+#include "db/leveldbVlog_db.h"
 using namespace std;
 using ycsbc::DB;
 using ycsbc::DBFactory;
@@ -34,6 +35,8 @@ DB* DBFactory::CreateDB(utils::Properties &props) {
     return new TbbScanDB;
   } else if (props["dbname"] == "leveldb"){
 	return new LevelDB(props["dbfilename"].c_str(),props["configpath"].c_str());
+  } else if (props["dbname"] == "leveldbVlog"){
+    return new LeveldbVlog(props["dbfilename"].c_str(),props["configpath"].c_str());
   }
   else return NULL;
 }

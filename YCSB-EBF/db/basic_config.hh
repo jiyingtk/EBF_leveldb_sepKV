@@ -45,6 +45,7 @@ private:
     friend class Basic_ConfigMod<LevelDB_ConfigMod>;
     std::string _bloom_filename;
     std::string _bloom_bits_array_filename;
+    std::string _vlog_filename;
     int _max_open_files;
     bool _hierarchical_bloom_flag;
     int _bloom_bits;
@@ -74,6 +75,7 @@ private:
     size_t _blockCacheSize;
 public:
     std::string getBloom_filename();
+    std::string getVlogFilename();
     int getMax_open_files();
     int getBloomType();
     int getBloom_bits();

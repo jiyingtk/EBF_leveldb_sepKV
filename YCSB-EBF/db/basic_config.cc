@@ -37,6 +37,7 @@ void LevelDB_ConfigMod::setConfigPath(const char*path){
     boost::property_tree::ini_parser::read_ini(path, _pt);
     assert (!_pt.empty());
     _bloom_filename = readString("basic.bloomFileName");
+    _vlog_filename= readString("vlog.vlogFileName");
     _bloom_bits = readInt("basic.bloomBits");
     std::cout<<"_bloom_bits_"<<_bloom_bits<<std::endl;
     _max_file_size = readInt("basic.maxFileSize");
@@ -71,6 +72,11 @@ boost::shared_ptr<T> Basic_ConfigMod<T>::instance= nullptr;*/
 std::string LevelDB_ConfigMod::getBloom_filename(){
     assert(!_pt.empty());
     return _bloom_filename;
+}
+
+std::string LevelDB_ConfigMod::getVlogFilename() {
+    assert(!_pt.empty());
+    return _vlog_filename;
 }
 
 int LevelDB_ConfigMod::getBloom_bits(){

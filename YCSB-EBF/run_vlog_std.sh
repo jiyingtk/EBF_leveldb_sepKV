@@ -10,6 +10,7 @@ function __modifyConfig() {
 
 function __loadLSM() {
     rm -rf "$dbfilename"
+    rm -rf "$vlogfilename"
     loadname=$1
     loadname="$loadname"_load.txt
     dirname=$2
@@ -24,8 +25,8 @@ function __loadLSM() {
         mkdir  -p "$dirname"
     fi
     __modifyConfig directIOFlag false
-    echo ./ycsbc -db leveldb -threads 4 -P $workloadw_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad false \> "$loadname"
-    ./ycsbc -db leveldb -threads 4 -P $workloadw_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad false > "$loadname"
+    echo ./ycsbc -db leveldbVlog -threads 4 -P $workloadw_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad false \> "$loadname"
+    ./ycsbc -db leveldbVlog -threads 4 -P $workloadw_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad false > "$loadname"
     sync;echo 1 > /proc/sys/vm/drop_caches
     echo finish ycsb load
     sleep 100s
@@ -61,10 +62,10 @@ function __runLSM(){
     __modifyConfig LifeTime "$life_time"
     if [ x$workload_prefix != x ]
     then
-        ./ycsbc -db leveldb -threads 1 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst" 
+        ./ycsbc -db leveldbVlog -threads 1 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst"
     else
-            echo ./ycsbc -db leveldb -threads 2 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst" -readTheadNums 0 \> "$runname"_changeRatio"$cR"_lifetime"$life_time".txt 2\>\&1
-            ./ycsbc -db leveldb -threads 2 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst" -readTheadNums 0 > "$runname"_changeRatio"$cR"_lifetime"$life_time".txt 2>&1
+            echo ./ycsbc -db leveldbVlog -threads 2 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst" -readTheadNums 0 \> "$runname"_changeRatio"$cR"_lifetime"$life_time".txt 2\>\&1
+            ./ycsbc -db leveldbVlog -threads 2 -P $workloadr_name -dbfilename "$dbfilename" -configpath "$configpath" -skipLoad true -requestdistribution "$requestdistribution" -zipfianconst "$zipfianconst" -readTheadNums 0 > "$runname"_changeRatio"$cR"_lifetime"$life_time".txt 2>&1
         sync;echo 1 > /proc/sys/vm/drop_caches
         echo finish ycsbc run
         chmod +r fp_access_file.txt
@@ -88,8 +89,11 @@ function __runLSM(){
 
 
 experiment_time=5
-dbfilename_o=./ssd2/mlsm
+dbfilename_o=./ssd2/mlsmvlog
+vlogfilename=./ssd2/vlog
 configpath=./configDir/leveldb_config.ini
+section=vlog
+__modifyConfig vlogFileName "$vlogfilename"
 section=basic
 lsmtype=(mleveldb)
 
@@ -140,6 +144,7 @@ run_type=2
 
 bitsArrayFilename=./bitsArray/bitsArray"$arrayname".txt
 echo dbfilename: "$dbfilename"
+echo vlogfilename: "$vlogfilename"
 let ts=tablesize*1024*1024
 __modifyConfig valueSize 1024
 __modifyConfig filterBaseLg 16
